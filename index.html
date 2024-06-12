@@ -1,0 +1,342 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLX - Page Principale</title>
+    <style>
+        
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(18, 18, 18, 0.8);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader:before {
+            content: "";
+            width: 40px;
+            height: 40px;
+            border: 4px solid transparent;
+            border-top: 4px solid #ff4757;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+   
+        header {
+            background-color: #1f1f1f;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header img.logo {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            height: 60px;
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        header a.logo:hover img {
+            transform: scale(1.1) rotate(10deg);
+            opacity: 0.8;
+        }
+
+        header a.discord-logo {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        header a.discord-logo img {
+            height: 80px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        header a.discord-logo:hover img {
+            transform: scale(1.2);
+        }
+
+        header h1 {
+            margin: 0;
+            color: #ff4757;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        header p {
+            margin: 5px 0 0;
+            color: #ffa502;
+        }
+
+        
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #282828;
+            padding: 10px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        nav a {
+            color: #e0e0e0;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 4px;
+            transition: background 0.3s, color 0.3s;
+            font-weight: 600;
+        }
+
+        nav a:hover {
+            background-color: #ff4757;
+            color: #fff;
+        }
+
+        nav a.active {
+            background-color: #ff4757;
+            color: #fff;
+        }
+
+        
+        .container {
+            text-align: center;
+            padding: 60px 20px;
+            background: url('images/background.jpg') no-repeat center center/cover;
+        }
+
+        .container h1 {
+            font-size: 3em;
+            margin: 0;
+            color: #ffffff;
+        }
+
+        .container p {
+            font-size: 1.5em;
+            margin: 10px 0 40px;
+            color: #dcdcdc;
+        }
+
+        
+        .search-box {
+            display: inline-block;
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 15px 20px;
+            font-size: 18px;
+            border-radius: 30px;
+            border: 2px solid #ff4757;
+            width: 300px;
+            transition: width 0.4s ease-in-out;
+            outline: none;
+            background-color: #1f1f1f;
+            color: #e0e0e0;
+        }
+
+        .search-box input:focus {
+            width: 400px;
+        }
+
+        .suggestions {
+            position: absolute;
+            top: 50px;
+            left: 0;
+            background-color: #1f1f1f;
+            color: #e0e0e0;
+            border-radius: 5px;
+            width: 100%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .suggestion {
+            padding: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .suggestion:hover {
+            background-color: #ff4757;
+        }
+
+        .suggestion span {
+            margin-left: 10px;
+        }
+
+        /* Presentation Styles */
+        .presentation {
+            padding: 40px 20px;
+            text-align: left;
+            background-color: #181818;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            margin-top: 40px;
+        }
+
+        .presentation h2 {
+            color: #ff4757;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+        }
+
+        .presentation h3 {
+            color: #ffa502;
+            font-size: 1.8em;
+            margin: 30px 0 20px;
+        }
+
+        .presentation p {
+            font-size: 1.2em;
+            color: #e0e0e0;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: #1f1f1f;
+            color: #e0e0e0;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+            box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+   
+    <div id="loader" class="loader"></div>
+
+    <header>
+        <a href="index.html" class="logo">
+            <img src="https://zupimages.net/up/24/24/hjpi.png" alt="Logo" class="logo">
+        </a>
+        <a href="https://discord.gg/BxUscAfkCU" class="discord-logo">
+            <img src="https://zupimages.net/up/24/24/zpyj.png" alt="Discord Logo">
+        </a>
+        <h1>SLX CRACK</h1>
+        <p>TOUT VOS JEUX PAYANT GRATUITS</p>
+    </header>
+    <nav>
+        <a href="index.html" class="active">Page Principale</a>
+        <a href="page2.html">Page 2</a>
+        <a href="page3.html">Soon</a>
+        <a href="page4.html">Soon</a>
+        <a href="page5.html">Soon</a>
+        <a href="page6.html">Soon</a>
+        <a href="page7.html">Soon</a>
+        <a href="multijoueurs.html">Multijoueurs</a>
+        <a href="info.html">Info</a>
+        <a href="PatchNotes.html">Patch Notes</a>
+    </nav>
+    <div class="container">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Cherchez un jeu.." oninput="showSuggestions()">
+            <div class="suggestions" id="suggestionsBox"></div>
+        </div>
+    </div>
+
+    
+    <div class="presentation">
+        <h2>Bienvenue sur SLX Crack !</h2>
+        <p>
+            SLX Crack est votre destination ultime pour télécharger gratuitement des jeux payants, sans virus et en toute sécurité. Notre mission est de vous fournir un accès rapide et facile à une vaste collection de jeux pour toutes les plateformes, avec des mises à jour régulières et des versions crackées fiables.
+        </p>
+
+        <h3>Pourquoi choisir SLX Crack ?</h3>
+
+        <p>
+            Notre site est conçu pour être simple à utiliser et nous veillons à ce que chaque fichier soit minutieusement vérifié pour garantir une expérience utilisateur sans problème. Rejoignez notre communauté et profitez des dernières nouveautés en matière de jeux vidéo, tout en économisant votre argent.
+        </p>
+
+        <p style="color: #FF5733;">Un launcher de jeux crack est en développement. <strong>Status : Dev.</strong></p>
+        
+        </p> Information : ça serai un launcher qui regroupe tout les jeux crack de notre site.
+             Qui permettra d'installer, mettre a jour, lancer les jeux crack depuis le launcher avec une interfarce moderne et bien organiser. 
+     </p>    Et bien plus encore !</p>
+
+    </div>
+
+    <footer>
+        &copy; 2024 SLX
+    </footer>
+
+    <script>
+        // Base de données des jeux
+        const games = [
+            { name: "Bodycam", url: "https://www.clictune.com/jWQo" },
+            { name: "Golf It", url: "https://www.clictune.com/jX9J" },
+        ];
+
+        
+        function showSuggestions() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const suggestionsBox = document.getElementById('suggestionsBox');
+            suggestionsBox.innerHTML = '';
+
+            if (query.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+
+            const filteredGames = games.filter(game => game.name.toLowerCase().includes(query));
+
+            if (filteredGames.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+
+            suggestionsBox.style.display = 'block';
+
+            filteredGames.forEach(game => {
+                const suggestionItem = document.createElement('div');
+                suggestionItem.classList.add('suggestion');
+                suggestionItem.innerHTML = `<span>${game.name}</span>`;
+                suggestionItem.onclick = () => {
+                    window.location.href = game.url;
+                };
+                suggestionsBox.appendChild(suggestionItem);
+            });
+        }
+
+        
+        window.addEventListener('load', function () {
+            document.getElementById('loader').style.display = 'none';
+        });
+    </script>
+</body>
+
+</html>
