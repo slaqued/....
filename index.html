@@ -247,96 +247,17 @@
         <a href="https://discord.gg/BxUscAfkCU" class="discord-logo">
             <img src="https://zupimages.net/up/24/24/zpyj.png" alt="Discord Logo">
         </a>
-        <h1>SLX CRACK</h1>
-        <p>TOUT VOS JEUX PAYANT GRATUITS</p>
+        <h1>Le site revient bientôt</h1>
+        <p>nom de domaine : bientôt</p>
     </header>
     <nav>
         <a href="index.html" class="active">Page Principale</a>
-        <a href="page2.html">Page 2</a>
-        <a href="page3.html">Soon</a>
-        <a href="page4.html">Soon</a>
-        <a href="page5.html">Soon</a>
-        <a href="page6.html">Soon</a>
-        <a href="page7.html">Soon</a>
-        <a href="multijoueurs.html">Multijoueurs</a>
-        <a href="info.html">Info</a>
-        <a href="PatchNotes.html">Patch Notes</a>
-    </nav>
-    <div class="container">
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Cherchez un jeu.." oninput="showSuggestions()">
-            <div class="suggestions" id="suggestionsBox"></div>
-        </div>
-    </div>
 
-    
-    <div class="presentation">
-        <h2>Bienvenue sur SLX Crack !</h2>
-        <p>
-            SLX Crack est votre destination ultime pour télécharger gratuitement des jeux payants, sans virus et en toute sécurité. Notre mission est de vous fournir un accès rapide et facile à une vaste collection de jeux, avec des mises à jour régulières et des versions crackées fiables.
-        </p>
-
-        <h3>Pourquoi choisir SLX Crack ?</h3>
-
-        <p>
-            Notre site est conçu pour être simple à utiliser et nous veillons à ce que chaque fichier soit minutieusement vérifié pour garantir une expérience utilisateur sans problème. Rejoignez notre communauté et profitez des dernières nouveautés en matière de jeux vidéo, tout en économisant votre argent.
-        </p>
-
-        <p style="color: #FF5733;">Un launcher de jeux crack est en développement. <strong>Status : Dev.</strong></p>
-        
-        </p> Information : ça serai un launcher qui regroupe tout les jeux crack de notre site.
-             Qui permettra d'installer, mettre a jour, lancer les jeux crack depuis le launcher avec une interfarce moderne et bien organiser. 
-     </p>    Et bien plus encore !</p>
-
-    </div>
+        <div>
 
     <footer>
         &copy; 2024 SLX
     </footer>
-
-    <script>
-        // Base de données des jeux
-        const games = [
-            { name: "Soon", url: "Soon" },
-            { name: "Soon", url: "Soon" },
-        ];
-
-        
-        function showSuggestions() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const suggestionsBox = document.getElementById('suggestionsBox');
-            suggestionsBox.innerHTML = '';
-
-            if (query.length === 0) {
-                suggestionsBox.style.display = 'none';
-                return;
-            }
-
-            const filteredGames = games.filter(game => game.name.toLowerCase().includes(query));
-
-            if (filteredGames.length === 0) {
-                suggestionsBox.style.display = 'none';
-                return;
-            }
-
-            suggestionsBox.style.display = 'block';
-
-            filteredGames.forEach(game => {
-                const suggestionItem = document.createElement('div');
-                suggestionItem.classList.add('suggestion');
-                suggestionItem.innerHTML = `<span>${game.name}</span>`;
-                suggestionItem.onclick = () => {
-                    window.location.href = game.url;
-                };
-                suggestionsBox.appendChild(suggestionItem);
-            });
-        }
-
-        
-        window.addEventListener('load', function () {
-            document.getElementById('loader').style.display = 'none';
-        });
-    </script>
 </body>
 
 </html>
