@@ -95,10 +95,69 @@ local Theme = {
 }
 
 -- ═══════════════════════════════════════════════
---              UTILITAIRES
+--              ICÔNES CUSTOM (rbxassetid)
 -- ═══════════════════════════════════════════════
 
-local function Tween(obj, time, props, style, dir)
+-- Bibliothèque d'icônes Roblox (Material Icons via rbxassetid)
+local Icons = {
+    -- UI Actions
+    close      = "rbxassetid://7072725342",
+    minimize   = "rbxassetid://7072718120",
+    check      = "rbxassetid://7072719338",
+    warn       = "rbxassetid://7072718018",
+    error      = "rbxassetid://7072725342",
+    info       = "rbxassetid://7072716858",
+    key        = "rbxassetid://7072716758",
+    shield     = "rbxassetid://7072718778",
+    search     = "rbxassetid://7072718558",
+    settings   = "rbxassetid://7072719440",
+    -- Game
+    aim        = "rbxassetid://7072718896",
+    eye        = "rbxassetid://7072717882",
+    bolt       = "rbxassetid://7072719440",
+    star       = "rbxassetid://7072718540",
+    heart      = "rbxassetid://7072717342",
+    sword      = "rbxassetid://7072718778",
+    -- Nav
+    arrow_r    = "rbxassetid://7072717660",
+    arrow_d    = "rbxassetid://7072718120",
+    arrow_u    = "rbxassetid://7072718016",
+    dot        = "rbxassetid://7072716842",
+    -- Misc
+    color      = "rbxassetid://7072716842",
+    text       = "rbxassetid://7072718558",
+    slider_ic  = "rbxassetid://7072717660",
+    dropdown   = "rbxassetid://7072718120",
+    button     = "rbxassetid://7072719440",
+    toggle     = "rbxassetid://7072717342",
+    nexus      = "rbxassetid://7072718778",
+    connected  = "rbxassetid://7072719338",
+}
+
+-- Crée un ImageLabel icône custom (fallback texte si asset non dispo)
+local function MakeIcon(parent, assetId, size, pos, color, zindex)
+    size    = size   or UDim2.new(0, 16, 0, 16)
+    pos     = pos    or UDim2.new(0, 0, 0.5, -8)
+    color   = color  or Theme.TextMuted
+    zindex  = zindex or 23
+    
+    local img = Instance.new("ImageLabel")
+    img.Size              = size
+    img.Position          = pos
+    img.Image             = assetId
+    img.ImageColor3       = color
+    img.BackgroundTransparency = 1
+    img.ScaleType         = Enum.ScaleType.Fit
+    img.ZIndex            = zindex
+    img.Parent            = parent
+    return img
+end
+
+
+
+-- ═══════════════════════════════════════════════
+--              UTILITAIRES
+-- ═══════════════════════════════════════════════
     style = style or Enum.EasingStyle.Quart
     dir   = dir   or Enum.EasingDirection.Out
     local t = TweenService:Create(obj, TweenInfo.new(time, style, dir), props)
@@ -136,7 +195,18 @@ end
 
 local function AddGradient(parent, c0, c1, rot)
     local g = Instance.new("UIGradient")
-    g.Color = ColorSequence.new(c0 or Theme.Accent, c1 or Theme.Accent2)
+    local col0 = c0 or Theme.Accent
+    local col1 = c1 or Theme.Accent2
+    -- Support both Color3 and ColorSequenceKeypoint inputs
+    if typeof(col0) == "Color3" then
+        g.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, col0),
+            ColorSequenceKeypoint.new(1, col1)
+        })
+    else
+        -- Already ColorSequenceKeypoints → wrap in table
+        g.Color = ColorSequence.new({col0, col1})
+    end
     g.Rotation = rot or 90
     g.Parent = parent
     return g
@@ -254,11 +324,11 @@ function NexusLib:Notify(config)
     EnsureNotifContainer(self._root)
     
     local accentColor = Theme.Accent
-    local iconText    = "◎"
+    local iconAsset   = Icons.info
     
-    if notifType == "success" then accentColor = Theme.Accent3; iconText = "✓"
-    elseif notifType == "warn" then accentColor = Theme.Warning; iconText = "⚠"
-    elseif notifType == "error" then accentColor = Theme.Danger;  iconText = "✕"
+    if notifType == "success" then accentColor = Theme.Accent3; iconAsset = Icons.check
+    elseif notifType == "warn" then accentColor = Theme.Warning; iconAsset = Icons.warn
+    elseif notifType == "error" then accentColor = Theme.Danger;  iconAsset = Icons.error
     end
     
     -- Notif frame
@@ -296,17 +366,10 @@ function NexusLib:Notify(config)
     AddCorner(glow, Theme.Corner)
     
     -- Icon
-    local icon = Create("TextLabel", {
-        Size                   = UDim2.new(0, 40, 1, 0),
-        Position               = UDim2.new(0, 12, 0, 0),
-        Text                   = iconText,
-        TextColor3             = accentColor,
-        TextSize               = 20,
-        Font                   = Theme.FontSemi,
-        BackgroundTransparency = 1,
-        ZIndex                 = 3,
-        Parent                 = notif
-    })
+    MakeIcon(notif, iconAsset,
+        UDim2.new(0, 22, 0, 22),
+        UDim2.new(0, 19, 0.5, -11),
+        accentColor, 3)
     
     -- Title
     local titleLbl = Create("TextLabel", {
@@ -406,16 +469,15 @@ function NexusLib:Loader(config)
         ZIndex                 = 12,
         Parent                 = card
     })
-    AddGradient(topBorder,
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(0,0,0)),
+    -- top border gradient
+    local topBorderGrad = Instance.new("UIGradient")
+    topBorderGrad.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0,   Color3.fromRGB(0,0,0)),
         ColorSequenceKeypoint.new(0.5, Theme.Accent),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(0,0,0))
-    )
-    -- fix: use proper gradient
-    do
-        topBorder.BackgroundColor3 = Theme.Accent
-        topBorder.BackgroundTransparency = 0.4
-    end
+        ColorSequenceKeypoint.new(1,   Color3.fromRGB(0,0,0))
+    })
+    topBorderGrad.Rotation = 0
+    topBorderGrad.Parent = topBorder
     
     -- Ambient glow derrière
     local ambient = Create("Frame", {
@@ -445,10 +507,7 @@ function NexusLib:Loader(config)
         Parent                 = orbFrame
     })
     AddCorner(orbCore, Theme.CornerRound)
-    AddGradient(orbCore,
-        ColorSequenceKeypoint.new(0, Theme.Accent),
-        ColorSequenceKeypoint.new(1, Theme.Accent2)
-    )
+    AddGradient(orbCore, Theme.Accent, Theme.Accent2)
     
     local ring1 = Create("Frame", {
         Size                   = UDim2.new(1, 0, 1, 0),
@@ -534,10 +593,7 @@ function NexusLib:Loader(config)
         Parent                 = progressBG
     })
     AddCorner(progressFill, Theme.CornerRound)
-    AddGradient(progressFill,
-        ColorSequenceKeypoint.new(0, Theme.Accent),
-        ColorSequenceKeypoint.new(1, Theme.Accent2)
-    )
+    AddGradient(progressFill, Theme.Accent, Theme.Accent2)
     
     -- Steps container
     local stepsContainer = Create("Frame", {
@@ -675,17 +731,10 @@ function NexusLib:_ShowKeySystem(parent, key, successCb)
     parent.AutomaticSize = Enum.AutomaticSize.Y
     
     -- Icon clé
-    local keyIcon = Create("TextLabel", {
-        Size                   = UDim2.new(1, 0, 0, 70),
-        Position               = UDim2.new(0, 0, 0, 20),
-        Text                   = "🔑",
-        TextSize               = 36,
-        Font                   = Theme.FontBody,
-        BackgroundTransparency = 1,
-        TextXAlignment         = Enum.TextXAlignment.Center,
-        ZIndex                 = 12,
-        Parent                 = parent
-    })
+    local keyIcon = MakeIcon(parent, Icons.key,
+        UDim2.new(0, 48, 0, 48),
+        UDim2.new(0.5, -24, 0, 24),
+        Theme.Gold, 12)
     
     local titleLbl = Create("TextLabel", {
         Size                   = UDim2.new(1, -40, 0, 28),
@@ -763,10 +812,7 @@ function NexusLib:_ShowKeySystem(parent, key, successCb)
         Parent                 = parent
     })
     AddCorner(verifyBtn, Theme.Corner)
-    AddGradient(verifyBtn,
-        ColorSequenceKeypoint.new(0, Theme.Accent),
-        ColorSequenceKeypoint.new(1, Theme.Accent2)
-    )
+    AddGradient(verifyBtn, Theme.Accent, Theme.Accent2)
     
     verifyBtn.MouseEnter:Connect(function()
         Tween(verifyBtn, 0.15, {BackgroundColor3 = Theme.Accent2})
@@ -868,16 +914,10 @@ function NexusLib:Verify(config)
         Parent = card
     })
     
-    local shield = Create("TextLabel", {
-        Size = UDim2.new(0, 50, 0, 50),
-        Position = UDim2.new(0, 0, 0.5, -25),
-        Text = "🛡️",
-        TextSize = 28,
-        Font = Theme.FontBody,
-        BackgroundTransparency = 1,
-        ZIndex = 52,
-        Parent = header
-    })
+    local shield = MakeIcon(header, Icons.shield,
+        UDim2.new(0, 40, 0, 40),
+        UDim2.new(0, 5, 0.5, -20),
+        Theme.Accent3, 52)
     
     local hTitle = Create("TextLabel", {
         Size = UDim2.new(1, -60, 0, 28),
@@ -1082,10 +1122,7 @@ function NexusLib:Window(config)
         Parent = topBar
     })
     AddCorner(logoFrame, UDim.new(0, 5))
-    AddGradient(logoFrame,
-        ColorSequenceKeypoint.new(0, Theme.Accent),
-        ColorSequenceKeypoint.new(1, Theme.Accent2)
-    )
+    AddGradient(logoFrame, Theme.Accent, Theme.Accent2)
     
     local logoLbl = Create("TextLabel", {
         Size = UDim2.new(1, 0, 1, 0),
@@ -1326,17 +1363,27 @@ function NexusLib:Window(config)
         })
         AddCorner(tabBtn, Theme.Corner)
         
-        local tabIcon_lbl = Create("TextLabel", {
-            Size = UDim2.new(0, 24, 1, 0),
-            Position = UDim2.new(0, 8, 0, 0),
-            Text = tabIcon,
-            TextColor3 = Theme.TextMuted,
-            TextSize = 15,
-            Font = Theme.FontBody,
-            BackgroundTransparency = 1,
-            ZIndex = 23,
-            Parent = tabBtn
-        })
+        -- Tab icon (ImageLabel si assetid, sinon texte fallback)
+        local tabIcon_img
+        local isAsset = type(tabIcon) == "string" and tabIcon:sub(1,12) == "rbxassetid:/"
+        if isAsset then
+            tabIcon_img = MakeIcon(tabBtn, tabIcon,
+                UDim2.new(0, 18, 0, 18),
+                UDim2.new(0, 9, 0.5, -9),
+                Theme.TextMuted, 23)
+        else
+            tabIcon_img = Create("TextLabel", {
+                Size = UDim2.new(0, 24, 1, 0),
+                Position = UDim2.new(0, 6, 0, 0),
+                Text = tabIcon,
+                TextColor3 = Theme.TextMuted,
+                TextSize = 14,
+                Font = Theme.FontBody,
+                BackgroundTransparency = 1,
+                ZIndex = 23,
+                Parent = tabBtn
+            })
+        end
         
         local tabName_lbl = Create("TextLabel", {
             Size = UDim2.new(1, -40, 1, 0),
@@ -1373,24 +1420,32 @@ function NexusLib:Window(config)
             Visible = false,
             Parent = contentArea
         })
-        AddListLayout(tabContent, Enum.FillDirection.Vertical, 4)
+        local tabLayout = AddListLayout(tabContent, Enum.FillDirection.Vertical, 4)
         AddPadding(tabContent, 10, 12, 10, 12)
         
-        -- Auto size scroll
-        tabContent:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-            tabContent.CanvasSize = UDim2.new(0, 0, 0, tabContent.UIListLayout and tabContent.UIListLayout.AbsoluteContentSize.Y + 20 or 0)
+        -- Auto size scroll canvas
+        tabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+            tabContent.CanvasSize = UDim2.new(0, 0, 0, tabLayout.AbsoluteContentSize.Y + 20)
         end)
         
         local function setActive(active)
             if active then
                 Tween(tabBtn, 0.15, {BackgroundTransparency = 0.1, BackgroundColor3 = Theme.Panel})
-                Tween(tabIcon_lbl, 0.15, {TextColor3 = Theme.Accent})
+                if tabIcon_img:IsA("ImageLabel") then
+                    Tween(tabIcon_img, 0.15, {ImageColor3 = Theme.Accent})
+                else
+                    Tween(tabIcon_img, 0.15, {TextColor3 = Theme.Accent})
+                end
                 Tween(tabName_lbl, 0.15, {TextColor3 = Theme.Text})
                 Tween(indicator, 0.15, {BackgroundTransparency = 0})
                 tabContent.Visible = true
             else
                 Tween(tabBtn, 0.15, {BackgroundTransparency = 1})
-                Tween(tabIcon_lbl, 0.15, {TextColor3 = Theme.TextMuted})
+                if tabIcon_img:IsA("ImageLabel") then
+                    Tween(tabIcon_img, 0.15, {ImageColor3 = Theme.TextMuted})
+                else
+                    Tween(tabIcon_img, 0.15, {TextColor3 = Theme.TextMuted})
+                end
                 Tween(tabName_lbl, 0.15, {TextColor3 = Theme.TextMuted})
                 Tween(indicator, 0.15, {BackgroundTransparency = 1})
                 tabContent.Visible = false
@@ -1416,8 +1471,6 @@ function NexusLib:Window(config)
                 Tween(tabBtn, 0.1, {BackgroundTransparency = 1})
             end
         end)
-        
-        Tab.setActive = setActive
         table.insert(Win._tabs, Tab)
         
         -- Activer le premier tab
@@ -2118,8 +2171,8 @@ function NexusLib:Window(config)
             
             local nameLbl = Create("TextLabel", {
                 Size = UDim2.new(1, -80, 1, 0),
-                Position = UDim2.new(0, 12, 0, 0),
-                Text = "🎨  " .. cName,
+                Position = UDim2.new(0, 40, 0, 0),
+                Text = cName,
                 TextColor3 = Theme.Text,
                 TextSize = 12,
                 Font = Theme.FontSemi,
@@ -2128,6 +2181,10 @@ function NexusLib:Window(config)
                 ZIndex = 23,
                 Parent = row
             })
+            MakeIcon(row, Icons.color,
+                UDim2.new(0, 18, 0, 18),
+                UDim2.new(0, 12, 0.5, -9),
+                Theme.Accent2, 24)
             
             local preview = Create("Frame", {
                 Size = UDim2.new(0, 28, 0, 28),
