@@ -2404,44 +2404,94 @@ end
 -- ═══════════════════════════════════════════════
 
 --[[
+═══════════════════════════════════════════════════════════════
+    NEXUS UI — EXEMPLE D'UTILISATION COMPLET
+    Copiez ce bloc, retirez les --[[ et ]] et adaptez.
+═══════════════════════════════════════════════════════════════
+
+──────────────────────────────────────────
+  CHARGEMENT RAPIDE (sans loader ni key)
+──────────────────────────────────────────
+
+    local Nexus = loadstring(game:HttpGet("YOUR_RAW_URL"))()
+
+    local Win = Nexus:Window({ Title = "Mon Script", Subtitle = "v1.0" })
+    local Tab = Win:Tab({ Name = "Main", Icon = "◈" })
+    Tab:Toggle({ Name = "Test", Default = false, Callback = function(v) print(v) end })
+
+──────────────────────────────────────────
+  UTILISATION COMPLÈTE (loader + verify + window)
+──────────────────────────────────────────
 
 local Nexus = NexusLib.new()
 
--- 1. LOADER avec key
+-- ══════════════════════════════════════
+-- ÉTAPE 1 — LOADER
+--   Affiche un écran de chargement animé
+--   avec steps et barre de progression.
+--   Si Key est fourni → affiche le système
+--   de clé avant d'appeler Callback.
+-- ══════════════════════════════════════
+
 Nexus:Loader({
-    Title    = "MY SCRIPT",
-    Subtitle = "v2.0 — Premium Edition",
-    Key      = "NEXUS-A7F3-K9X2-M4P1",
-    Steps    = {
-        "Initialisation du module",
-        "Connexion au serveur",
-        "Vérification de la clé",
-        "Chargement de l'interface"
+    Title    = "DARK HUB",
+    Subtitle = "v3.0 — Obsidian Edition",
+
+    -- Clé d'accès (retirez la ligne pour désactiver)
+    Key = "NEXUS-A7F3-K9X2-M4P1",
+
+    -- Étapes affichées dans le loader
+    Steps = {
+        "Initialisation du moteur",
+        "Connexion aux serveurs",
+        "Vérification de la licence",
+        "Chargement de l'interface",
     },
+
     Callback = function()
-        
-        -- 2. VÉRIFICATION optionnelle
+
+        -- ══════════════════════════════════════
+        -- ÉTAPE 2 — VERIFY (optionnel)
+        --   Écran de vérification multi-étapes
+        --   avant d'afficher l'interface.
+        -- ══════════════════════════════════════
+
         Nexus:Verify({
-            Title = "Vérification sécurisée",
+            Title = "Authentification Nexus",
             Steps = {
-                {Name = "Exécuteur détecté",  Desc = "Compatible"},
-                {Name = "Anti-tamper check",  Desc = "Signature valide"},
-                {Name = "Ping serveur",        Desc = "nexus.gg — OK"},
-                {Name = "Permissions",         Desc = "Accès Premium accordé"},
+                { Name = "Exécuteur détecté",   Desc = "Synapse X / KRNL / Fluxus" },
+                { Name = "Intégrité du script",  Desc = "Signature SHA-256 valide"  },
+                { Name = "Ping API",             Desc = "nexus-api.gg — 12ms"       },
+                { Name = "Droits d'accès",       Desc = "Tier Premium accordé"       },
             },
             Callback = function()
-                
-                -- 3. FENÊTRE PRINCIPALE
+
+                -- ══════════════════════════════════════
+                -- ÉTAPE 3 — FENÊTRE PRINCIPALE
+                --   Win:Tab()         → crée un onglet
+                --   Win:SetStatus()   → barre de statut
+                --   Win:SetTitle()    → change le titre
+                --   Win:Toggle()      → affiche/masque
+                --   Win:Destroy()     → supprime l'UI
+                -- ══════════════════════════════════════
+
                 local Win = Nexus:Window({
-                    Title    = "MY SCRIPT",
-                    Subtitle = "Premium v2.0",
+                    Title    = "DARK HUB",
+                    Subtitle = "Premium v3.0",
+                    -- Size     = UDim2.new(0, 620, 0, 440),  -- taille custom (optionnel)
+                    -- Position = UDim2.new(0.5,-310,0.5,-220), -- position custom (optionnel)
                 })
-                
-                -- ─ Tab Aimbot ─
-                -- Icônes : texte unicode OU rbxassetid:// pour ImageLabel custom
+
+                -- ────────────────────────────────────
+                --  TAB : AIMBOT
+                --  Icône = rbxassetid (ImageLabel)
+                --        OU unicode (TextLabel fallback)
+                -- ────────────────────────────────────
                 local AimTab = Win:Tab({ Name = "Aimbot", Icon = Icons.aim })
+
                 AimTab:Section({ Name = "Général" })
-                
+
+                -- Toggle — retourne une API { :Get(), :Set(bool) }
                 local aimbotToggle = AimTab:Toggle({
                     Name     = "Activer l'aimbot",
                     Desc     = "Assistance visée automatique",
@@ -2449,104 +2499,385 @@ Nexus:Loader({
                     Default  = false,
                     Color    = Theme.Accent,
                     Callback = function(v)
-                        Win:SetStatus(v and "● Aimbot ON" or "● Aimbot OFF",
-                            v and Theme.Accent3 or Theme.Danger)
+                        -- Met à jour la barre de statut selon l'état
+                        Win:SetStatus(
+                            v and "● Aimbot ACTIF" or "● Aimbot inactif",
+                            v and Theme.Accent3    or Theme.Danger
+                        )
+                        Nexus:Notify({
+                            Title   = "Aimbot",
+                            Message = v and "Aimbot activé !" or "Aimbot désactivé",
+                            Type    = v and "success" or "warn",
+                        })
                     end
                 })
-                
+
+                AimTab:Toggle({
+                    Name     = "Silent Aim",
+                    Desc     = "Téléporte les balles sans bouger la caméra",
+                    Icon     = Icons.eye,
+                    Default  = false,
+                    Color    = Theme.Accent2,
+                    Callback = function(v) end
+                })
+
+                AimTab:Toggle({
+                    Name     = "Prediction",
+                    Desc     = "Anticipe la position du joueur",
+                    Icon     = Icons.arrow_r,
+                    Default  = true,
+                    Color    = Theme.Accent3,
+                    Callback = function(v) end
+                })
+
+                AimTab:Section({ Name = "Précision" })
+
+                -- Slider — retourne une API { :Get(), :Set(number) }
                 local fovSlider = AimTab:Slider({
-                    Name     = "FOV Aimbot",
+                    Name     = "Rayon FOV",
                     Icon     = Icons.slider_ic,
                     Min      = 10,
                     Max      = 360,
                     Default  = 120,
                     Suffix   = "°",
                     Color    = Theme.Accent,
+                    Callback = function(v)
+                        -- drawFOV(v)
+                    end
+                })
+
+                AimTab:Slider({
+                    Name     = "Smoothness",
+                    Icon     = Icons.slider_ic,
+                    Min      = 1,
+                    Max      = 100,
+                    Default  = 30,
+                    Suffix   = "%",
+                    Color    = Theme.Accent2,
                     Callback = function(v) end
                 })
-                
+
                 AimTab:Section({ Name = "Cible" })
-                
-                AimTab:Dropdown({
+
+                -- Dropdown — retourne une API { :Get(), :Set(string) }
+                local bodyPart = AimTab:Dropdown({
                     Name     = "Partie du corps",
                     Icon     = Icons.dropdown,
-                    Options  = {"Tête", "Torse", "Corps"},
+                    Options  = { "Tête", "Torse", "Aléatoire", "Cou" },
                     Default  = "Tête",
                     Callback = function(v) end
                 })
-                
-                -- Keybind pour toggle aimbot
+
+                AimTab:Dropdown({
+                    Name     = "Équipes visées",
+                    Icon     = Icons.dropdown,
+                    Options  = { "Ennemis seulement", "Tout le monde", "Alliés" },
+                    Default  = "Ennemis seulement",
+                    Callback = function(v) end
+                })
+
                 AimTab:Section({ Name = "Raccourci" })
+
+                -- Keybind — retourne une API { :Get(), :Set(Enum.KeyCode) }
                 AimTab:Keybind({
                     Name     = "Toggle Aimbot",
                     Icon     = Icons.bolt,
                     Default  = Enum.KeyCode.E,
-                    Callback = function(key)
-                        local cur = aimbotToggle:Get()
-                        aimbotToggle:Set(not cur)
+                    Callback = function()
+                        -- Inverse l'état du toggle aimbot via son API
+                        aimbotToggle:Set(not aimbotToggle:Get())
                     end
                 })
-                
-                -- ─ Tab ESP ─
+
+                -- ────────────────────────────────────
+                --  TAB : ESP
+                -- ────────────────────────────────────
                 local EspTab = Win:Tab({ Name = "ESP", Icon = Icons.eye })
+
                 EspTab:Section({ Name = "Joueurs" })
-                EspTab:Toggle({ Name = "ESP Joueurs", Icon = Icons.eye,    Default = false, Callback = function(v) end })
-                EspTab:Toggle({ Name = "ESP Noms",    Icon = Icons.text,   Default = true,  Callback = function(v) end })
-                EspTab:Toggle({ Name = "ESP Boxes",   Icon = Icons.button, Default = false, Callback = function(v) end })
+
+                local espToggle = EspTab:Toggle({
+                    Name     = "ESP Joueurs",
+                    Desc     = "Boîtes et squelettes visibles à travers les murs",
+                    Icon     = Icons.eye,
+                    Default  = false,
+                    Color    = Theme.Accent,
+                    Callback = function(v) end
+                })
+
+                EspTab:Toggle({
+                    Name     = "Afficher les noms",
+                    Icon     = Icons.text,
+                    Default  = true,
+                    Callback = function(v) end
+                })
+
+                EspTab:Toggle({
+                    Name     = "Afficher la distance",
+                    Icon     = Icons.dot,
+                    Default  = true,
+                    Callback = function(v) end
+                })
+
+                EspTab:Toggle({
+                    Name     = "Afficher la vie",
+                    Icon     = Icons.heart,
+                    Default  = false,
+                    Color    = Theme.Danger,
+                    Callback = function(v) end
+                })
+
                 EspTab:Section({ Name = "Apparence" })
-                EspTab:ColorPicker({ Name = "Couleur ESP", Default = Color3.fromRGB(79,158,255), Callback = function(c) end })
-                EspTab:Slider({ Name = "Épaisseur lignes", Icon = Icons.slider_ic, Min = 1, Max = 5, Default = 1, Suffix = "px", Callback = function(v) end })
-                
-                -- ─ Tab Misc ─
+
+                -- ColorPicker — retourne une API { :Get(), :Set(Color3) }
+                EspTab:ColorPicker({
+                    Name     = "Couleur ESP",
+                    Default  = Color3.fromRGB(79, 158, 255),
+                    Callback = function(c) end
+                })
+
+                EspTab:ColorPicker({
+                    Name     = "Couleur alliés",
+                    Default  = Color3.fromRGB(52, 211, 153),
+                    Callback = function(c) end
+                })
+
+                EspTab:Slider({
+                    Name     = "Épaisseur des lignes",
+                    Icon     = Icons.slider_ic,
+                    Min      = 1,
+                    Max      = 5,
+                    Default  = 1,
+                    Suffix   = "px",
+                    Color    = Theme.Accent,
+                    Callback = function(v) end
+                })
+
+                EspTab:Slider({
+                    Name     = "Distance max",
+                    Icon     = Icons.slider_ic,
+                    Min      = 50,
+                    Max      = 2000,
+                    Default  = 500,
+                    Suffix   = "m",
+                    Color    = Theme.Accent2,
+                    Callback = function(v) end
+                })
+
+                EspTab:Section({ Name = "Raccourci" })
+                EspTab:Keybind({
+                    Name     = "Toggle ESP",
+                    Icon     = Icons.eye,
+                    Default  = Enum.KeyCode.Z,
+                    Callback = function()
+                        espToggle:Set(not espToggle:Get())
+                    end
+                })
+
+                -- ────────────────────────────────────
+                --  TAB : MISC
+                -- ────────────────────────────────────
                 local MiscTab = Win:Tab({ Name = "Misc", Icon = Icons.bolt })
-                MiscTab:Section({ Name = "Utilitaires" })
+
+                MiscTab:Section({ Name = "Mouvement" })
+
+                MiscTab:Toggle({
+                    Name     = "Fly",
+                    Desc     = "Voler librement dans la map",
+                    Icon     = Icons.star,
+                    Default  = false,
+                    Color    = Theme.Accent2,
+                    Callback = function(v) end
+                })
+
+                MiscTab:Toggle({
+                    Name     = "No Clip",
+                    Desc     = "Passer à travers les murs",
+                    Icon     = Icons.shield,
+                    Default  = false,
+                    Color    = Theme.Warning,
+                    Callback = function(v) end
+                })
+
+                MiscTab:Toggle({
+                    Name     = "Infinite Jump",
+                    Icon     = Icons.arrow_u,
+                    Default  = false,
+                    Callback = function(v) end
+                })
+
+                MiscTab:Slider({
+                    Name     = "Vitesse de marche",
+                    Icon     = Icons.slider_ic,
+                    Min      = 16,
+                    Max      = 200,
+                    Default  = 16,
+                    Suffix   = "",
+                    Color    = Theme.Accent3,
+                    Callback = function(v)
+                        -- game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = v
+                    end
+                })
+
+                MiscTab:Section({ Name = "Actions rapides" })
+
                 MiscTab:Button({
                     Name     = "Teleport Spawn",
                     Icon     = Icons.arrow_r,
                     Desc     = "Retourner au point de départ",
+                    Color    = Theme.Accent,
                     Callback = function()
-                        Nexus:Notify({ Title = "Téléport", Message = "Téléportation au spawn !", Type = "success" })
+                        Nexus:Notify({
+                            Title    = "Téléport",
+                            Message  = "Téléportation au spawn réussie !",
+                            Type     = "success",
+                            Duration = 3,
+                        })
                     end
                 })
+
                 MiscTab:Button({
-                    Name     = "Fly Mode",
-                    Icon     = Icons.star,
-                    Callback = function() end
+                    Name     = "Copier Position",
+                    Icon     = Icons.search,
+                    Desc     = "Copie la position dans le presse-papier",
+                    Callback = function()
+                        local pos = game.Players.LocalPlayer.Character
+                            and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                            and game.Players.LocalPlayer.Character.HumanoidRootPart.Position
+                        if pos then
+                            setclipboard(("%.1f, %.1f, %.1f"):format(pos.X, pos.Y, pos.Z))
+                            Nexus:Notify({ Title = "Copié", Message = "Position dans le presse-papier", Type = "info" })
+                        end
+                    end
                 })
+
+                MiscTab:Button({
+                    Name     = "Anti-AFK",
+                    Icon     = Icons.check,
+                    Color    = Theme.Accent3,
+                    Callback = function()
+                        game:GetService("VirtualUser"):Button2Down(Vector2.new(0,0), CFrame.new())
+                        task.wait(0.1)
+                        game:GetService("VirtualUser"):Button2Up(Vector2.new(0,0), CFrame.new())
+                        Nexus:Notify({ Title = "Anti-AFK", Message = "Déclenchement manuel OK", Type = "success" })
+                    end
+                })
+
                 MiscTab:Section({ Name = "Interface" })
+
+                -- Keybind pour afficher/masquer l'UI
                 MiscTab:Keybind({
-                    Name     = "Afficher/Masquer UI",
+                    Name     = "Afficher / Masquer l'UI",
                     Icon     = Icons.eye,
                     Default  = Enum.KeyCode.RightShift,
-                    Callback = function() Win:Toggle() end
-                })
-                
-                -- ─ Tab Settings ─
-                local SetTab = Win:Tab({ Name = "Config", Icon = Icons.settings })
-                SetTab:Section({ Name = "Thème" })
-                SetTab:Input({
-                    Name        = "Titre personnalisé",
-                    Icon        = Icons.text,
-                    Placeholder = "Mon Script...",
-                    Callback    = function(v)
-                        if v ~= "" then Win:SetTitle(v) end
+                    Callback = function()
+                        Win:Toggle()
                     end
                 })
-                SetTab:ColorPicker({ Name = "Couleur accent", Default = Theme.Accent, Callback = function(c) end })
-                
-                -- Notification de bienvenue
-                Nexus:Notify({
-                    Title    = "Bienvenue !",
-                    Message  = "My Script Premium chargé avec succès",
-                    Type     = "success",
-                    Duration = 5
+
+                -- ────────────────────────────────────
+                --  TAB : CONFIG
+                -- ────────────────────────────────────
+                local CfgTab = Win:Tab({ Name = "Config", Icon = Icons.settings })
+
+                CfgTab:Section({ Name = "Interface" })
+
+                -- Input — retourne une API { :Get(), :Set(string) }
+                CfgTab:Input({
+                    Name        = "Titre de la fenêtre",
+                    Icon        = Icons.text,
+                    Placeholder = "DARK HUB",
+                    Callback    = function(v)
+                        if v ~= "" then
+                            Win:SetTitle(v)
+                        end
+                    end
                 })
-                
-            end
+
+                CfgTab:Input({
+                    Name        = "Sous-titre",
+                    Icon        = Icons.text,
+                    Placeholder = "Premium v3.0",
+                    Callback    = function(v)
+                        if v ~= "" then
+                            Win:SetTitle(nil, v)
+                        end
+                    end
+                })
+
+                CfgTab:ColorPicker({
+                    Name     = "Couleur d'accent",
+                    Default  = Theme.Accent,
+                    Callback = function(c)
+                        -- Le thème est global : Theme.Accent = c
+                        -- puis recréer les éléments si nécessaire
+                    end
+                })
+
+                CfgTab:Section({ Name = "Notifications de test" })
+
+                CfgTab:Button({
+                    Name     = "Notif Info",
+                    Icon     = Icons.info,
+                    Color    = Theme.Accent,
+                    Callback = function()
+                        Nexus:Notify({ Title = "Information", Message = "Ceci est une notification info.", Type = "info", Duration = 4 })
+                    end
+                })
+                CfgTab:Button({
+                    Name     = "Notif Succès",
+                    Icon     = Icons.check,
+                    Color    = Theme.Accent3,
+                    Callback = function()
+                        Nexus:Notify({ Title = "Succès", Message = "Opération réussie !", Type = "success", Duration = 4 })
+                    end
+                })
+                CfgTab:Button({
+                    Name     = "Notif Avertissement",
+                    Icon     = Icons.warn,
+                    Color    = Theme.Warning,
+                    Callback = function()
+                        Nexus:Notify({ Title = "Attention", Message = "Action potentiellement risquée.", Type = "warn", Duration = 4 })
+                    end
+                })
+                CfgTab:Button({
+                    Name     = "Notif Erreur",
+                    Icon     = Icons.error,
+                    Color    = Theme.Danger,
+                    Callback = function()
+                        Nexus:Notify({ Title = "Erreur", Message = "Une erreur est survenue.", Type = "error", Duration = 4 })
+                    end
+                })
+
+                CfgTab:Section({ Name = "Danger" })
+
+                CfgTab:Button({
+                    Name     = "Fermer l'UI",
+                    Icon     = Icons.close,
+                    Color    = Theme.Danger,
+                    Desc     = "Supprime définitivement la fenêtre",
+                    Callback = function()
+                        Win:Destroy()
+                    end
+                })
+
+                -- ══════════════════════════════════════
+                -- NOTIFICATION DE BIENVENUE
+                -- Déclenchée une fois l'UI prête
+                -- ══════════════════════════════════════
+                task.delay(0.3, function()
+                    Nexus:Notify({
+                        Title    = "Bienvenue !",
+                        Message  = "Dark Hub Premium chargé — Bonne session !",
+                        Type     = "success",
+                        Duration = 5,
+                    })
+                end)
+
+            end -- Verify Callback
         })
-    end
+    end -- Loader Callback
 })
 
-]]
 
 return NexusLib
